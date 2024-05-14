@@ -1,4 +1,10 @@
-use actix_web :: {delete, get, post, put, web, App, HttpRequest, HttpResponse, HttpServer, Responder};
+use actix_web :: {delete,web::Path, get, post, put, web, App, HttpRequest, HttpResponse, HttpServer, Responder};
+use serde::{Deserialize,Serialize};
+
+#[derive(Deserialize,Serialize)]
+pub struct CreateBookingUrl{
+    pub id:String,
+}
 
 async fn health(_req:HttpRequest)->impl Responder{
     println!("api hit {:?}",_req);
@@ -20,9 +26,10 @@ async fn create_booking(_req:HttpRequest)->impl Responder{
     HttpResponse::Created().body("created")
 }
 
-#[get("/booking")]
-async fn get_booking(_req:HttpRequest)->impl Responder{
-    HttpResponse::Ok().body("single response")
+#[get("/booking/{id}")]
+async fn get_booking(path:Path<CreateBookingUrl>)->impl Responder{
+    let id: String = path.into_inner().id;
+    HttpResponse::Ok().body(id)
 }
 
 #[put("/booking")]
